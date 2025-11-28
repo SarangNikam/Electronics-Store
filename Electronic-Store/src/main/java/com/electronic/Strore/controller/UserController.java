@@ -2,6 +2,7 @@ package com.electronic.Strore.controller;
 
 import com.electronic.Strore.dto.UserDto;
 import com.electronic.Strore.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class UserController {
 
     //create
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDto){
         UserDto user = userService.create(userDto);
         return new ResponseEntity<>(user,HttpStatus.CREATED);
     }
@@ -27,7 +28,7 @@ public class UserController {
     //update
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> update(
-              @PathVariable ("userId") int userId,
+              @Valid @PathVariable ("userId") int userId,
               @RequestBody UserDto userDto
     ){
         UserDto updateUserDto = userService.update(userDto, userId);
