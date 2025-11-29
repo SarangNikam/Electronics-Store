@@ -2,6 +2,7 @@ package com.electronic.Strore.services.impl;
 
 import com.electronic.Strore.dto.UserDto;
 import com.electronic.Strore.entities.User;
+import com.electronic.Strore.exception.ResourceNotFoundException;
 import com.electronic.Strore.repositories.UserRepository;
 import com.electronic.Strore.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -34,7 +35,7 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public UserDto update(UserDto userDto, int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found with this id"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found with this id"));
 
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
@@ -49,13 +50,13 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public void delete(int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("id not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id not found"));
         userRepository.delete(user);
 
     }
 
     @Override
-    public List<UserDto> getAllUser() {
+    public List<UserDto> getAllUser(int pageNumber,int pageSize) {
         List<User> users=userRepository.findAll();
         List<UserDto> dtoList=users.stream().map(user -> entityToDto(user)).collect(Collectors.toList());
         return dtoList;
@@ -63,13 +64,13 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public UserDto getById(int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("id not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id not found"));
         return entityToDto(user);
     }
 
     @Override
     public UserDto getByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()->new RuntimeException(("User not found with this email")));
+        User user = userRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found with this email"));
         return entityToDto(user);
 
     }
@@ -79,6 +80,18 @@ public class UserServiceimpl implements UserService {
         List<User> users=userRepository.findByNameContaining(keyword);
         List<UserDto> dtoList=users.stream().map(user -> entityToDto(user)).collect(Collectors.toList());
         return dtoList;
+    }
+
+    @Override
+    public UserDto updateSingleData(UserDto userDto, int id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with this id"));
+
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+
+        User updatedData = userRepository.save(user);
+        UserDto userDto1 = entityToDto(updatedData);
+        return userDto1;
     }
 
     private UserDto entityToDto(User savedUser) {

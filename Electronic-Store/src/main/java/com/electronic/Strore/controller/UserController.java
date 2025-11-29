@@ -44,8 +44,11 @@ public class UserController {
     }
     //get all
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUser(){
-        List<UserDto> allUser = userService.getAllUser();
+    public ResponseEntity<List<UserDto>> getAllUser(
+            @RequestParam(value = "pageNumber",defaultValue ="0",required = false)int pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize
+    ){
+        List<UserDto> allUser = userService.getAllUser( pageNumber, pageSize);
         return new ResponseEntity<>(allUser,HttpStatus.OK);
     }
     //get by id
@@ -69,6 +72,15 @@ public class UserController {
     public  List<UserDto> getByKeyword(@PathVariable String Keyword) {
         List<UserDto> userDto = userService.search(Keyword);
         return userDto;
+
+    }
+    @PatchMapping("/{userId}")
+    public ResponseEntity<UserDto> updateSingleData(
+            @PathVariable ("userId") int userId,
+            @RequestBody UserDto userDto){
+        UserDto updateUserDto = userService.updateSingleData(userDto, userId);
+        return new ResponseEntity<>(updateUserDto,HttpStatus.OK);
+
 
     }
 
