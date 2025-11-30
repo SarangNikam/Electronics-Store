@@ -16,8 +16,8 @@ public interface CategoryService {
     void delete(String categoryId);
 
     //get all
-    List<CategoryDto> getAllCategoy();
+    List<CategoryDto> getAllCategory();
 
     // get single
-    CategoryDto getById(CategoryDto categoryDto,String categoryId);
+    CategoryDto getById(String categoryId);
 }
