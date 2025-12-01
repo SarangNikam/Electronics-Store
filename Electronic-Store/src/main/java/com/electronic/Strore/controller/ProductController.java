@@ -3,6 +3,7 @@ package com.electronic.Strore.controller;
 import com.electronic.Strore.dto.ProductDto;
 import com.electronic.Strore.dto.UserDto;
 import com.electronic.Strore.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class ProductController {
     private ProductService productService;
     //create
     @PostMapping
-    public ResponseEntity<ProductDto> create(ProductDto productDto){
+    public ResponseEntity<ProductDto> create(@Valid @RequestBody ProductDto productDto){
         ProductDto productDto1 = productService.create(productDto);
         return new ResponseEntity<>(productDto1, HttpStatus.CREATED);
     }
@@ -41,7 +42,7 @@ public class ProductController {
     }
 
     //get by price
-    @GetMapping("/{price}")
+    @GetMapping("/price/{price}")
     public ResponseEntity<ProductDto> getByPrice(@PathVariable double price){
         ProductDto byPrice = productService.getByPrice(price);
         return new ResponseEntity<>(byPrice,HttpStatus.OK);
@@ -49,14 +50,17 @@ public class ProductController {
 
 
     //get by discount
-    @GetMapping("/{discount}")
-    public ResponseEntity<ProductDto> getByDiscount(@PathVariable double discount){
-        ProductDto byDiscount = productService.getByDiscount(discount);
-        return new ResponseEntity<>(byDiscount,HttpStatus.OK);
+    @GetMapping("/discount/{discount}")
+    public ResponseEntity<List<ProductDto>> getByDiscount(@PathVariable double discount){
+
+        List<ProductDto> byDiscount = productService.getByDiscount(discount);
+        return new ResponseEntity<>(byDiscount, HttpStatus.OK);
     }
 
+
+
     //delete
-    @DeleteMapping("/{productId}")
+    @DeleteMapping("/delete/{productId}")
     public ResponseEntity<String> delete(@PathVariable String productId){
         productService.delete(productId);
         return new ResponseEntity<>("Product deleted Successfully!!",HttpStatus.OK);
@@ -64,8 +68,8 @@ public class ProductController {
 
     //search
     @GetMapping("/search/{keyword}")
-    public  List<ProductDto> getByKeyword(@PathVariable String Keyword) {
-        List<ProductDto> userDto = productService.search(Keyword);
+    public  List<ProductDto> getByKeyword(@PathVariable String keyword) {
+        List<ProductDto> userDto = productService.search(keyword);
         return userDto;
 
     }

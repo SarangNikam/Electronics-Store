@@ -26,6 +26,10 @@ public interface ProductService {
     List<ProductDto> search(String keyword);
 
     //get by discount
-    ProductDto getByDiscount(double discont);
+    List<ProductDto> getByDiscount(double discount);
+
+    //create  product with category
+    ProductDto createWithCategory(ProductDto productDto,String categoryId);
+
 
 }

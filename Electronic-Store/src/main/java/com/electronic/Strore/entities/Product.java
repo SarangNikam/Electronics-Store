@@ -1,9 +1,6 @@
 package com.electronic.Strore.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +15,11 @@ import lombok.Setter;
 @Table(name = "Product")
 public class Product {
     @Id
+
     private String productId;
-    @Column(name = "product_name")
+
     @NotBlank
+    @Column(name = "product_name")
     private String name;
     @Column(name = "product_description",length = 100)
     private String description;
@@ -32,6 +31,10 @@ public class Product {
     private boolean stock;
     @Column(name = "quantity")
     private int quantity;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="categoryId")
+    private Category category;
 
 
 

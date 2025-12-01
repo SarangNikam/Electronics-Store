@@ -16,7 +16,7 @@ public class CategoryDto {
 
     private String categoryId;
     @NotBlank
-    @Size(min = 3,max=20,message = "Invalid name!!")
+    @Size(min = 2,max=20,message = "Invalid name!!")
     private String title;
     @NotBlank(message = "Description required!!")
     private  String description;

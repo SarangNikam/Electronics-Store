@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product,String> {
 
     Optional<Product> findByPrice(double price);
-    Product findByDiscount(double discount);
+    List<Product> findByDiscount(double discount);
+
     List<Product> findByNameContaining(String keyword);
 }

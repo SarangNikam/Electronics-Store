@@ -1,9 +1,12 @@
 package com.electronic.Strore.services.impl;
 
+import com.electronic.Strore.dto.CategoryDto;
 import com.electronic.Strore.dto.ProductDto;
+import com.electronic.Strore.entities.Category;
 import com.electronic.Strore.entities.Product;
 import com.electronic.Strore.entities.User;
 import com.electronic.Strore.exception.ResourceNotFoundException;
+import com.electronic.Strore.repositories.CategoryRepository;
 import com.electronic.Strore.repositories.ProductRepository;
 import com.electronic.Strore.services.ProductService;
 import org.modelmapper.ModelMapper;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,19 +26,24 @@ public class ProductServiceimpl implements ProductService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public ProductServiceimpl() {
         super();
     }
 
     @Override
     public ProductDto create(ProductDto productDto) {
-        String ProductId = UUID.randomUUID().toString();
-        productDto.setProductId(ProductId);
-        Product product = mapper.map(productDto, Product.class);
-        Product savedProduct = productRepository.save(product);
 
-        return mapper.map(savedProduct,ProductDto.class);
+        String productId = UUID.randomUUID().toString();
+        Product product = mapper.map(productDto, Product.class);
+        product.setProductId(productId);
+
+        Product savedProduct = productRepository.save(product);
+        return mapper.map(savedProduct, ProductDto.class);
     }
+
 
     @Override
     public ProductDto update(ProductDto productDto, String productId) {
@@ -46,7 +55,7 @@ public class ProductServiceimpl implements ProductService {
         product.setDiscount(productDto.getDiscount());
         Product updatedProduct = productRepository.save(product);
 
-        return mapper.map(updatedProduct,ProductDto.class);
+        return mapper.map(updatedProduct, ProductDto.class);
     }
 
     @Override
@@ -71,22 +80,45 @@ public class ProductServiceimpl implements ProductService {
     @Override
     public ProductDto getByPrice(double price) {
         Product product = productRepository.findByPrice(price).orElseThrow(() -> new ResourceNotFoundException("product not found with given price"));
-        return mapper.map(product,ProductDto.class);
+        return mapper.map(product, ProductDto.class);
 
     }
+
 
     @Override
-    public ProductDto getByDiscount(double discont) {
-        Product product = productRepository.findByPrice(discont).orElseThrow(() -> new ResourceNotFoundException("product not found with given price"));
-        return mapper.map(product,ProductDto.class);
+    public List<ProductDto> getByDiscount(double discount) {
+        List<Product> products = productRepository.findByDiscount(discount);
+        return products.stream().map(product -> mapper.map(product, ProductDto.class)).toList();
     }
+
 
     @Override
     public List<ProductDto> search(String keyword) {
-        List<Product> products= productRepository.findByNameContaining(keyword);
+        List<Product> products = productRepository.findByNameContaining(keyword);
         List<ProductDto> productDtoList = products.stream()
                 .map(product -> mapper.map(product, ProductDto.class))
                 .toList();
         return productDtoList;
+    }
+
+    @Override
+    public ProductDto createWithCategory(ProductDto productDto, String categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with this id"));
+
+        // Generate productId manually (since no @GeneratedValue)
+        String productId = UUID.randomUUID().toString();
+
+        Product product = mapper.map(productDto, Product.class);
+        product.setProductId(productId);
+        product.setCategory(category);
+
+        Product savedProduct = productRepository.save(product);
+
+        // Map product to DTO manually for category
+        ProductDto response = mapper.map(savedProduct, ProductDto.class);
+        response.setCategoryDto(mapper.map(category, CategoryDto.class));
+
+        return response;
     }
 }

@@ -1,8 +1,10 @@
 package com.electronic.Strore.controller;
 
 import com.electronic.Strore.dto.CategoryDto;
+import com.electronic.Strore.dto.ProductDto;
 import com.electronic.Strore.dto.UserDto;
 import com.electronic.Strore.services.CategoryService;
+import com.electronic.Strore.services.ProductService;
 import com.electronic.Strore.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class CategoryController {
     @Autowired
     public CategoryService categoryService;
 
+    @Autowired
+    private ProductService productService;
     //create
     @PostMapping
     public ResponseEntity<CategoryDto> create(@Valid @RequestBody CategoryDto categoryDto){
@@ -55,6 +59,17 @@ public class CategoryController {
         CategoryDto categoryDto = categoryService.getById(categoryId);
         return new ResponseEntity<>(categoryDto,HttpStatus.OK);
     }
+    //create product with category
+
+    @PostMapping("/{categoryId}/product")
+    public ResponseEntity<ProductDto> createProductWithCategory(
+            @PathVariable String categoryId,
+            @RequestBody ProductDto dto
+    ){
+        ProductDto withCategory = productService.createWithCategory(dto, categoryId);
+        return new ResponseEntity<>(withCategory,HttpStatus.CREATED);
+    }
+
 
 
 }
