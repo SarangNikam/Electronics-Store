@@ -1,11 +1,9 @@
 package com.electronic.Strore.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.bind.annotation.Mapping;
 
-import java.util.ArrayList;
-import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,14 +16,15 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cartItemId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
+
     private int quantity;
     private int totalPrice;
 
-    //mapped by cart
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cartId")
+    @JsonBackReference
     private Cart cart;
 }

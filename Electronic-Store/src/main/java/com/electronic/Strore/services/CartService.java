@@ -2,6 +2,8 @@ package com.electronic.Strore.services;
 
 import com.electronic.Strore.dto.AddItemToCartRequest;
 import com.electronic.Strore.dto.CartDto;
+import org.springframework.stereotype.Service;
+
 
 public interface CartService {
     //add items to cart
@@ -15,4 +17,6 @@ public interface CartService {
 
     //clear cart
     void clearCart(int userId);
+
+    CartDto getCartByUser(int userId);
 }
